@@ -1,0 +1,89 @@
+
+---
+title: "Assignment 04"
+author: "Yuxuan Luo"
+output: pdf_document
+urlcolor: blue
+geometry: margin=1.5in
+editor_options: 
+  chunk_output_type: console
+---
+\begin{center}
+\Huge{Regularization}
+\end{center}
+
+## Data Source
+```{r}
+# Import data from the following source:
+#https://catalog.data.gov/dataset/supply-chain-greenhouse-gas-emission-factors-for-us-industries-and-commodities
+
+library(readxl)
+Emission_data <- read_excel("D:\\Yuxuan_luo\\03Project\\data source\\SupplyChainEmissionFactorsforUSIndustriesCommodities.xlsx", sheet = "2016_Summary_Commodity")
+
+```
+
+```{r hidden-here-load}
+library(ggplot2)
+library(forcats)
+library(dplyr)
+```
+
+## Graph 1
+```{r}
+#Graph 1: Bar chart with color aesthetic, custom fill colors, and ordered x-axis
+ggplot(Emission_data, aes(x = reorder(Commodity_Name, Supply_chain_Emission_Factors_without_Margins), y = Supply_chain_Emission_Factors_without_Margins, fill = Substance)) +
+  geom_col(position = "dodge") +
+  labs(title = "Bar chart: Supply Chain Emission Factors without Margins", subtitle = "Emissions associated with cradle to factory gate",x = "Commodity_Name", y = "Emission Factors") +
+  scale_fill_manual(values = c("carbon dioxide" = "red", "methane" = "green", "nitrous oxide" = "blue", "other GHGs" = "purple")) +
+  theme_minimal()+
+    theme(axis.text.x = element_text(angle = 45, hjust = 1,size=5))
+```
+The bar chart provides a clear comparison of supply chain emission factors without margins across various commodities. By understanding the emission factors of different substances like carbon dioxide, methane, nitrous oxide, and other GHGs, policy makers can identify industries with higher carbon emissions and implement targeted reduction strategies. This information is particularly relevant for organizations aiming to decrease their emissions by making informed choices about their suppliers or transitioning to low-carbon alternatives.
+\vspace{0.25in}
+
+
+
+## Graph 2
+```{r}
+#Graph 2: Stacked bar chart with fill aesthetic and custom y-axis scale
+ggplot(Emission_data, aes(x = Commodity_Name, y = Supply_Chain_Emission_Factors_with_Margins, fill = Substance)) +
+  geom_col() +
+  labs(title = "Stacked Bar chart: Supply Chain Emission Factors with Margins",subtitle = "Emissions associated with cradle to shelf", x = "Commodity Name", y = "Emission Factors") +
+  scale_y_sqrt() +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1,size=5))
+```
+The stacked bar chart displays the supply chain emission factors with margins, which represents a more comprehensive view of emissions from cradle to shelf. This visualization allows policy makers to identify which industries are most responsible for emissions along the entire supply chain. This information is valuable for environmental policy, as it can inform initiatives for supply chain transparency and encourage the adoption of greener production and transportation methods.
+\vspace{0.25in}
+
+
+
+## Graph 3
+```{r}
+#Graph 3: Point plot with size and color aesthetics
+ggplot(Emission_data, aes(x = Commodity_Name, y = Supply_chain_Emission_Factors_without_Margins, size = DQ_ReliabilityScore_of_Factors_without_Margins, color = Substance)) +
+  geom_point() +
+  labs(title = "Point Plot: Supply Chain Emission Factors without Margins by Reliability Score",subtitle = "Emissions associated with cradle to shelf", x = "Commodity Name", y = "Emission Factors") +
+  scale_color_discrete(name = "Substance") +
+  theme_light()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1,size=5))
+```
+The point plot highlights the relationship between supply chain emission factors without margins and the reliability of the associated data. This is important for policy makers, as they can prioritize actions based on the most reliable data. By focusing on commodities with high emission factors and high data reliability, environmental policies can be more effective in reducing overall carbon emissions.
+\vspace{0.25in}
+
+
+
+## Graph 4
+```{r}
+#Graph 4: Line plot with linetype aesthetic and custom x-axis labels
+Emission_data %>%
+  mutate(Commodity_Code = factor(Commodity_Code, levels = unique(Commodity_Code))) %>%
+  ggplot(aes(x = Commodity_Code, y = Supply_chain_Emission_Factors_without_Margins, group = Substance, linetype = Substance)) +
+  geom_line() +
+  labs(title = "Line Plot: Supply Chain Emission Factors without Margins",subtitle = "Emissions associated with cradle to factory gate", x = "Commodity Code", y = "Emission Factors") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size=5))
+
+
+
+```
+The line plot provides an overview of the supply chain emission factors without margins across different commodity codes. This visualization helps policy makers to identify trends in emissions across sectors and develop targeted policies for industries with consistently high emission levels. This is particularly relevant for initiatives aiming to promote cleaner technologies, reduce greenhouse gas emissions, and achieve long-term environmental goals.
